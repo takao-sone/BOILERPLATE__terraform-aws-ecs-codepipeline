@@ -3,15 +3,11 @@ variable "project_name" {
   type = string
 }
 
-variable "aws_profile" {
-  type = string
-}
-
 variable "aws_region" {
   type = string
 }
 
-# Networking ===========================
+# ========================
 variable "vpc_cidr" {
   type = string
 }
@@ -31,3 +27,9 @@ variable "private_subnet_db_cidrs" {
 variable "private_subnet_endpoint_cidrs" {
   type = list(string)
 }
+
+variable "alb_sg_id" {
+  type = string
+}
+
+
