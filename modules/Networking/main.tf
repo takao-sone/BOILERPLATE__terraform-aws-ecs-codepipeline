@@ -158,7 +158,7 @@ resource "aws_security_group" "vpc_endpoint" {
     protocol        = "tcp"
     from_port       = 443
     to_port         = 443
-    security_groups = [aws_security_group.container.id]
+    security_groups = [var.app_container_security_group_id]
   }
   egress {
     protocol    = "-1"
@@ -169,28 +169,6 @@ resource "aws_security_group" "vpc_endpoint" {
 
   tags = {
     Name = "${var.project_name}-vpce-sg"
-  }
-}
-
-resource "aws_security_group" "container" {
-  vpc_id = aws_vpc.vpc.id
-  name   = "${var.project_name}-container-sg"
-
-  ingress {
-    protocol        = "tcp"
-    from_port       = 80
-    to_port         = 80
-    security_groups = [var.alb_sg_id]
-  }
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "${var.project_name}-container-sg"
   }
 }
 

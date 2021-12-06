@@ -13,7 +13,3 @@ output "private_subnet_container_ids" {
 output "private_subnet_db_ids" {
   value = aws_subnet.private_db_subnets[*].id
 }
-
-output "container_security_group_id" {
-  value = aws_security_group.container.id
-}

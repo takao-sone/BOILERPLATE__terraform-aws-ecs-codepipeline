@@ -28,8 +28,6 @@ variable "private_subnet_endpoint_cidrs" {
   type = list(string)
 }
 
-variable "alb_sg_id" {
+variable "app_container_security_group_id" {
   type = string
 }
-
-
