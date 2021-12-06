@@ -26,4 +26,10 @@ module "alb" {
   source       = "./modules/ALB"
   project_name = var.project_name
   vpc_id       = module.networking.vpc_id
+  public_subnet_ids = module.networking.public_subnet_ids
+}
+
+module "iam" {
+  source = "./modules/IAM"
+  project_name = var.project_name
 }
