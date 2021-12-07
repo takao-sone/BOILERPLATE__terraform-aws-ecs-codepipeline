@@ -11,29 +11,29 @@ provider "aws" {
 }
 
 resource "aws_resourcegroups_group" "resource_group" {
-  name     = "${var.project_name}-resource-group"
+  name = "${var.project_name}-resource-group"
 
   resource_query {
     query = jsonencode(
-    {
-      ResourceTypeFilters = [
-        "AWS::AllSupported",
-      ]
-      TagFilters          = [
-        {
-          Key    = "Project"
-          Values = [
-            var.project_name,
-          ]
-        },
-      ]
-    }
+      {
+        ResourceTypeFilters = [
+          "AWS::AllSupported",
+        ]
+        TagFilters = [
+          {
+            Key = "Project"
+            Values = [
+              var.project_name,
+            ]
+          },
+        ]
+      }
     )
-    type  = "TAG_FILTERS_1_0"
+    type = "TAG_FILTERS_1_0"
   }
 
-  tags     = {
-    Name     = "${var.project_name}-resource-group"
+  tags = {
+    Name = "${var.project_name}-resource-group"
   }
 }
 
@@ -56,11 +56,6 @@ module "alb" {
   public_subnet_ids = module.networking.public_subnet_ids
 }
 
-module "iam" {
-  source       = "./modules/IAM"
-  project_name = var.project_name
-}
-
 module "ecs" {
   source                             = "./modules/ECS"
   project_name                       = var.project_name
@@ -72,4 +67,18 @@ module "ecs" {
   alb_security_group_id              = module.alb.alb_security_group_id
   app_service_blue_target_group_arn  = module.alb.app_service_blue_target_group_arn
   app_service_green_target_group_arn = module.alb.app_service_green_target_group_arn
+}
+
+module "ci_cd" {
+  source                      = "./modules/CI_CD"
+  aws_region                  = var.aws_region
+  project_name                = var.project_name
+  alb_blue_target_group_name  = module.alb.alb_blue_target_group_name
+  alb_green_target_group_name = module.alb.alb_green_target_group_name
+  alb_http_listener_arn       = module.alb.alb_http_listener_arn
+  alb_http_test_listener_arn  = module.alb.alb_http_test_listener_arn
+  ecs_cluster_name            = module.ecs.ecs_cluster_name
+  app_ecs_service_name        = module.ecs.app_ecs_service_name
+  docker_hub_username         = var.docker_hub_username
+  docker_hub_password         = var.docker_hub_password
 }

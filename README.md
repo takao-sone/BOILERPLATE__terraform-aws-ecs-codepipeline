@@ -56,4 +56,13 @@ terraform apply
 10. 2 IAM Assume Role Policies
 
 ### Deploy
-1. CodeCommit
+1. CodeCommit Repository
+2. CodeBuild Project
+3. CodeDeploy App
+4. CodeDeploy Deployment Group
+5. CodePipeline
+6. CloudWatch Event rule
+7. CloudWatch Event target
+8. 4 IAM Roles for codebuild, codepipeline, cloudwatch_event, codedeploy
+9. S3 bucket for codepipeline artifact
+10. 2 SSM Parameters for docker_hub_username, password

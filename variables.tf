@@ -37,3 +37,12 @@ variable "private_subnet_db_cidrs" {
 variable "private_subnet_endpoint_cidrs" {
   type = list(string)
 }
+
+# Docker Hub ========================
+variable "docker_hub_username" {
+  type = string
+}
+
+variable "docker_hub_password" {
+  type = string
+}
