@@ -10,7 +10,32 @@ provider "aws" {
   }
 }
 
-#resource "aws_resourcegroups_group" "resource_group" {}
+resource "aws_resourcegroups_group" "resource_group" {
+  name     = "${var.project_name}-resource-group"
+
+  resource_query {
+    query = jsonencode(
+    {
+      ResourceTypeFilters = [
+        "AWS::AllSupported",
+      ]
+      TagFilters          = [
+        {
+          Key    = "Project"
+          Values = [
+            var.project_name,
+          ]
+        },
+      ]
+    }
+    )
+    type  = "TAG_FILTERS_1_0"
+  }
+
+  tags     = {
+    Name     = "${var.project_name}-resource-group"
+  }
+}
 
 module "networking" {
   source                          = "./modules/Networking"

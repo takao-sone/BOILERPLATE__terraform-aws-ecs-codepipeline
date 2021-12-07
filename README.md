@@ -19,6 +19,10 @@ terraform apply
 ```
 
 ## Main Resources
+
+### Other
+1. Resource Group (by Project:project_name)
+
 ### Networking
 1. VPC
 2. Internet Gateway
