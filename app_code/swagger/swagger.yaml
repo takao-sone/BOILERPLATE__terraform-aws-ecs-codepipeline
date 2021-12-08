@@ -1,0 +1,1037 @@
+openapi: 3.0.0
+info:
+  title: API
+  description: This is apis
+  contact:
+    email: info@serialize.info
+  license:
+    name: Apache 2.0
+    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:8080/api/v1'
+    description: 'SwaggerHub API Auto Mocking'
+  - url: 'TODO'
+    description: 'TODO'
+tags:
+  - name: TEST
+    description: Test endpoints
+  - name: users
+    # description: Users endpoints
+  - name: auth
+    description: Auth endpoints
+  - name: work_kinds
+    description: Work kinds endpoints
+  - name: work_sessions
+    description: Work sessions endpoints
+  - name: weekly_goals
+    description: Weekly goals endpoints
+paths:
+  /:
+    get:
+      tags:
+        - TEST
+      summary: test API
+      description: test endpoint
+      responses:
+        '200':
+          description: Hello
+          content:
+            application/json:
+              schema:
+                type: string
+  /users:
+    get:
+      security:
+        - cookieAuth: [ ]
+      tags:
+        - users
+      summary: get
+      description: Get logged-in user information
+      responses:
+        '200':
+          description: |
+            Get a user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserGetResponse'
+    post:
+      security:
+        - cookieAuth: [ ]
+      tags:
+        - users
+      summary: create
+      description: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserCreateRequest'
+      responses:
+        '200':
+          description: |
+            Create user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCreateResponse'
+    put:
+      security:
+        - cookieAuth: [ ]
+      tags:
+        - users
+      summary: update
+      description: a logged-in user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+      responses:
+        '200':
+          description: |
+            Update user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserUpdateResponse'
+    delete:
+      security:
+        - cookieAuth: [ ]
+      tags:
+        - users
+      summary: delete
+      description: Delete a logged-in user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDeleteRequest'
+      responses:
+        '200':
+          description: |
+            Delete user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDeleteResponse'
+  /login:
+    post:
+      tags:
+        - auth
+      summary: login
+      description: Login with an existing user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: |
+            Login user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+  /logout:
+    post:
+      security:
+        - cookieAuth: [ ]
+      tags:
+        - auth
+      summary: logout
+      description: Logout a logged-in user
+      responses:
+        '200':
+          description: |
+            success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutResponse'
+  /work-kinds:
+    get:
+      summary: Get List
+      description: Get work kinds registered by an authenticated user
+      tags:
+        - work_kinds
+      security:
+        - cookieAuth: [ ]
+      parameters:
+        - in: query
+          name: page
+          description: target page
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: per_page
+          description: the number of items per page
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: |
+            Get work kinds
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkKindsGetResponse'
+    post:
+      summary: Create
+      description: Create a work kind
+      tags:
+        - work_kinds
+      security:
+        - cookieAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkKindCreateRequest'
+      responses:
+        '200':
+          description: |
+            Create a work kind
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkKindCreateResponse'
+  /work-kinds/{id}:
+    get:
+      summary: Get
+      description: Get a work kind
+      tags:
+        - work_kinds
+      security:
+        - cookieAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Read a work kind
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkKindGetResponse'
+    put:
+      summary: Update
+      description: |
+        Update a work kind
+      tags:
+        - work_kinds
+      security:
+        - cookieAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkKindUpdateRequest'
+      responses:
+        '200':
+          description: |
+            Update user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkKindUpdateResponse'
+    delete:
+      summary: Delete
+      description: Delete a work kind
+      tags:
+        - work_kinds
+      security:
+        - cookieAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Delete user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkKindDeleteResponse'
+  /work-sessions:
+    post:
+      summary: Create
+      description: Create a work session
+      tags:
+        - work_sessions
+      security:
+        - cookieAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkSessionCreateRequest'
+      responses:
+        '200':
+          description: |
+            Create a work session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkSessionCreateResponse'
+    get:
+      summary: Read List
+      description: Read work sessions registered by an authenticated user
+      tags:
+        - work_sessions
+      security:
+        - cookieAuth: [ ]
+      parameters:
+        - in: query
+          name: page
+          description: target page
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: per_page
+          description: the number of items per page
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Get work sessions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkSessionsReadListResponse'
+  /work-sessions/summary:
+    get:
+      summary: Summary
+      description: Read today/this week/this month work sessions registered by an authenticated user
+      tags:
+        - work_sessions
+      security:
+        - cookieAuth: [ ]
+      parameters:
+        - in: query
+          name: today
+          description: today
+          schema:
+            type: string
+      responses:
+        200:
+          description: Get summary
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkSessionsSummaryResponse'
+  /work-sessions/{id}:
+    get:
+      summary: Read
+      description: Read a work session
+      tags:
+        - work_sessions
+      security:
+        - cookieAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Read a work session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkSessionReadResponse'
+    put:
+      summary: Update
+      description: Update a work session
+      tags:
+        - work_sessions
+      security:
+        - cookieAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkSessionUpdateRequest'
+      responses:
+        200:
+          description: Update a work session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkSessionUpdateResponse'
+    delete:
+      summary: Delete
+      description: Delete a work session
+      tags:
+        - work_sessions
+      security:
+        - cookieAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Delete a work session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkSessionDeleteResponse'
+  /weekly-goals:
+    post:
+      summary: c_weekly-goal
+      description: Create a weekly goal
+      tags:
+        - weekly_goals
+      security:
+        - cookieAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WeeklyGoalCreateRequest'
+      responses:
+        '200':
+          description: |
+            Create a work session
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeeklyGoalCreateResponse'
+    get:
+      summary: r_weekly-goals
+      description: Read work goals registered by an authenticated user
+      tags:
+        - weekly_goals
+      security:
+        - cookieAuth: [ ]
+      parameters:
+        - in: query
+          name: page
+          description: target page
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: per_page
+          description: the number of items per page
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: Get weekly goals
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeeklyGoalReadListResponse'
+  /weekly-goals/{id}:
+    get:
+      summary: r_weekly-goal
+      description: Get a weekly goal
+      tags:
+        - weekly_goals
+      security:
+        - cookieAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Read a weekly goal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeeklyGoalReadResponse'
+    put:
+      summary: u_weekly-goal
+      description: Update a weekly goal
+      tags:
+        - weekly_goals
+      security:
+        - cookieAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WeeklyGoalUpdateRequest'
+      responses:
+        200:
+          description: Update a weekly goal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeeklyGoalUpdateResponse'
+    delete:
+      summary: d_weekly-goal
+      description: Delete a weekly goal
+      tags:
+        - weekly_goals
+      security:
+        - cookieAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        200:
+          description: Delete a weekly goal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeeklyGoalDeleteResponse'
+  /weekly-goals/this-week:
+    get:
+      summary: r_weekly-goal-this-week
+      description: Get a weekly goal of this week
+      tags:
+        - weekly_goals
+      security:
+        - cookieAuth: [ ]
+      responses:
+        200:
+          description: Read a weekly goal
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeeklyGoalThisWeekReadResponse'
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: session
+  schemas:
+    LogoutResponse:
+      type: object
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: e_email
+        password:
+          type: string
+          minimum: 8
+          maximum: 100
+          example: e_password
+    LoginResponse:
+      required:
+        - user
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/ResponseUser'
+    # User
+    UserGetResponse:
+      required:
+        - user
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/ResponseUser'
+    UserCreateRequest:
+      required:
+        - account_name
+        - email
+        - password
+      type: object
+      properties:
+        account_name:
+          type: string
+          minimum: 1
+          maximum: 32
+          example: e_account_name
+        email:
+          type: string
+          format: email
+          example: e_email
+        password:
+          type: string
+          minimum: 8
+          maximum: 100
+          example: e_password
+    UserCreateResponse:
+      required:
+        - user
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/ResponseUser'
+    UserUpdateRequest:
+      required:
+        - current_password
+      type: object
+      properties:
+        account_name:
+          type: string
+          minimum: 1
+          maximum: 32
+          example: e_account_name
+        email:
+          type: string
+          format: email
+          example: e_email
+        current_password:
+          type: string
+          minimum: 8
+          maximum: 100
+          example: e_current_password
+        new_password:
+          type: string
+          minimum: 8
+          maximum: 100
+          example: e_new_password
+        confirmation_password:
+          type: string
+          minimum: 8
+          maximum: 100
+          example: e_confirmation_password
+    UserUpdateResponse:
+      required:
+        - user
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/ResponseUser'
+    UserDeleteRequest:
+      required:
+        - current_password
+      type: object
+      properties:
+        current_password:
+          type: string
+          minimum: 8
+          maximum: 100
+          example: e_current_password
+    UserDeleteResponse:
+      type: object
+    # WorkKind
+    WorkKindGetResponse:
+      type: object
+      required:
+        - work_kind
+      properties:
+        work_kind:
+          $ref: '#/components/schemas/ResponseWorkKind'
+    WorkKindsGetResponse:
+      type: object
+      required:
+        - work_kinds
+        - total_pages
+      properties:
+        work_kinds:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponseWorkKind'
+        total_pages:
+          type: integer
+          format: int64
+    WorkKindCreateRequest:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          minimum: 1
+          maximum: 20
+          example: E_name
+        description:
+          type: string
+          minimum: 1
+          maximum: 50
+          example: E_description
+    WorkKindCreateResponse:
+      type: object
+      required:
+        - work_kind
+      properties:
+        work_kind:
+          $ref: '#/components/schemas/ResponseWorkKind'
+    WorkKindUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minimum: 1
+          maximum: 20
+          example: E_name
+        description:
+          type: string
+          minimum: 1
+          maximum: 50
+          example: E_description
+    WorkKindUpdateResponse:
+      type: object
+      required:
+        - work_kind
+      properties:
+        work_kind:
+          $ref: '#/components/schemas/ResponseWorkKind'
+    WorkKindDeleteResponse:
+      type: object
+    # WorkSession
+    WorkSessionCreateRequest:
+      type: object
+      required:
+        - done_datetime
+        - duration_minutes
+      properties:
+        work_kind_id:
+          type: string
+          format: uuid
+        done_datetime:
+          type: string
+          format: date-time
+          example: "2021-05-20T00:00:00.000Z"
+        duration_minutes:
+          type: integer
+          format: int64
+          example: 90
+    WorkSessionCreateResponse:
+      type: object
+      required:
+        - work_session
+      properties:
+        work_session:
+          $ref: '#/components/schemas/ResponseWorkSession'
+    WorkSessionsReadListResponse:
+      type: object
+      required:
+        - work_sessions
+        - total_pages
+      properties:
+        work_sessions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponseWorkSession'
+        total_pages:
+          type: integer
+          format: int64
+    WorkSessionReadResponse:
+      type: object
+      required:
+        - work_session
+      properties:
+        work_session:
+          $ref: '#/components/schemas/ResponseWorkSession'
+    WorkSessionUpdateRequest:
+      type: object
+      required:
+        - done_datetime
+        - duration_minutes
+      properties:
+        done_datetime:
+          type: string
+          format: date-time
+          example: "2021-05-20T00:00:00.000Z"
+        duration_minutes:
+          type: integer
+          format: int64
+          example: 90
+    WorkSessionUpdateResponse:
+      type: object
+      required:
+        - work_session
+      properties:
+        work_session:
+          $ref: '#/components/schemas/ResponseWorkSession'
+    WorkSessionDeleteResponse:
+      type: object
+    WorkSessionsSummaryResponse:
+      type: object
+      required:
+        - today_total_minutes
+        - this_week_total_minutes
+        - this_month_total_minutes
+        - this_week_summaries
+      properties:
+        today_total_minutes:
+          type: integer
+          format: int64
+        this_week_total_minutes:
+          type: integer
+          format: int64
+        this_month_total_minutes:
+          type: integer
+          format: int64
+        this_week_summaries:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponseDayOfTheWeekSummary'
+    ResponseDayOfTheWeekSummary:
+      type: object
+      required:
+        - day_of_the_week_number
+        - total_minutes
+      properties:
+        date:
+          type: string
+          format: date
+        day_of_the_week_number:
+          type: integer
+          format: int64
+        total_minutes:
+          type: integer
+          format: int64
+    # WeeklyGoals
+    WeeklyGoalCreateRequest:
+      type: object
+      required:
+        - goal_minutes
+      properties:
+        goal_minutes:
+          type: integer
+          format: int32
+          example: 3600
+    WeeklyGoalCreateResponse:
+      type: object
+      required:
+        - work_session
+      properties:
+        weekly_goal:
+          $ref: '#/components/schemas/ResponseWeeklyGoal'
+    WeeklyGoalReadListResponse:
+      type: object
+      required:
+        - weekly_goals
+        - total_pages
+      properties:
+        weekly_goals:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponseWeeklyGoal'
+        weekly_performances:
+          type: array
+          items:
+            $ref: '#/components/schemas/ResponseWeeklyPerformance'
+        total_pages:
+          type: integer
+          format: int64
+    WeeklyGoalReadResponse:
+      type: object
+      required:
+        - weekly_goal
+      properties:
+        weekly_goal:
+          $ref: '#/components/schemas/ResponseWeeklyGoal'
+    WeeklyGoalUpdateRequest:
+      type: object
+      required:
+        - goal_minutes
+      properties:
+        goal_minutes:
+          type: integer
+          format: int64
+          example: 600
+    WeeklyGoalUpdateResponse:
+      type: object
+      required:
+        - weekly_goal
+      properties:
+        weekly_goal:
+          $ref: '#/components/schemas/ResponseWeeklyGoal'
+    WeeklyGoalDeleteResponse:
+      type: object
+    WeeklyGoalThisWeekReadResponse:
+      type: object
+      properties:
+        weekly_goal:
+          $ref: '#/components/schemas/ResponseWeeklyGoal'
+        progress:
+          $ref: '#/components/schemas/ResponseWeeklyGoalProgress'
+    # Util
+    ResponseUser:
+      type: object
+      required:
+        - unique_id
+        - account_name
+        - email
+        - created_at
+        - updated_at
+      properties:
+        unique_id:
+          type: string
+          example: e_id
+        account_name:
+          type: string
+          example: e_account_name
+        email:
+          type: string
+          example: e_email
+        created_at:
+          type: string
+          example: e_created_at
+        updated_at:
+          type: string
+          example: e_updated_at
+    ResponseWorkKind:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          example: E_id
+        name:
+          type: string
+          example: E_name
+        description:
+          type: string
+          example: E_description
+        created_at:
+          type: string
+          example: E_created_at
+        updated_at:
+          type: string
+          example: E_updated_at
+    ResponseWorkSession:
+      type: object
+      required:
+        - id
+        - work_kind_id
+        - done_datetime
+        - duration_minutes
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        work_kind_id:
+          type: string
+          format: uuid
+        done_datetime:
+          type: string
+          format: date-time
+          example: "2000-01-01T00:00:00.000Z"
+        duration_minutes:
+          type: integer
+          format: int64
+          example: 90
+        created_at:
+          type: string
+          format: date-time
+          example: "2000-01-01T00:00:00.000Z"
+        updated_at:
+          type: string
+          format: date-time
+          example: "2000-01-01T00:00:00.000Z"
+    ResponseWeeklyGoalProgress:
+      type: object
+      required:
+        - total_minutes
+      properties:
+        total_minutes:
+          type: integer
+          format: int32
+          example: 3600
+    ResponseWeeklyGoal:
+      type: object
+      required:
+        - id
+        - start_date
+        - end_date
+        - goal_minutes
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        goal_minutes:
+          type: integer
+          format: int32
+          example: 3600
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    ResponseWeeklyPerformance:
+      type: object
+      required:
+        - start_date
+        - end_date
+        - total_minutes
+      properties:
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        total_minutes:
+          type: integer
+          format: int32
+          example: 3600
+

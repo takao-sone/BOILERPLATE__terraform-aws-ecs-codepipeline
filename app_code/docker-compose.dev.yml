@@ -1,0 +1,71 @@
+version: '3.9'
+
+services:
+  # TODO: CLionのdebug機能を使いたい場合はコメントアウト
+  #  d-boilerplate-app:
+  #    container_name: d-boilerplate
+  #    build:
+  #      context: .
+  #      dockerfile: 'dev.dockerfile'
+  #    ports:
+  #      - 8080:8080
+  #    tty: true
+  #    networks:
+  #      - d-boilerplate-network
+  d-boilerplate-postgres:
+    container_name: d-boilerplate-postgres
+    image: postgres:latest
+    command: postgres -c log_destination=stderr -c log_statement=all
+    ports:
+      - '5432:5432'
+    volumes:
+      - d-boilerplate-postgres-volume:/var/lib/postgresql/data
+    environment:
+      - "POSTGRES_USER=${POSTGRES_USER}"
+      - "POSTGRES_DB=${POSTGRES_DB}"
+      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
+    networks:
+      - d-boilerplate-network
+  d-boilerplate-redis:
+    container_name: 'd-boilerplate-redis'
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    volumes:
+      - d-boilerplate-redis-volume:/data
+    networks:
+      - d-boilerplate-network
+  d-boilerplate-swagger-editor:
+    container_name: 'd-boilerplate-swagger-editor'
+    image: swaggerapi/swagger-editor
+    ports:
+      - '8081:8080'
+    volumes:
+      - ./swagger:/swagger
+    environment:
+      SWAGGER_FILE: /swagger/swagger.yaml
+    networks:
+      - d-boilerplate-swagger-network
+  d-boilerplate-swagger-ui:
+    container_name: 'd-boilerplate-swagger-ui'
+    image: swaggerapi/swagger-ui
+    ports:
+      - '8082:8080'
+    volumes:
+      - ./swagger/swagger.yaml:/swagger.yaml
+    environment:
+      SWAGGER_JSON: /swagger.yaml
+    networks:
+      - d-boilerplate-swagger-network
+
+volumes:
+  d-boilerplate-postgres-volume:
+  d-boilerplate-redis-volume:
+
+networks:
+  d-boilerplate-network:
+    name: d-boilerplate-network
+    driver: bridge
+  d-boilerplate-swagger-network:
+    name: d-boilerplate-swagger-network
+    driver: bridge
