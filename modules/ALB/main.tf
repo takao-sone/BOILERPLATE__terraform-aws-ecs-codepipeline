@@ -59,7 +59,7 @@ resource "aws_alb_target_group" "alb_blue_tg" {
   port        = 80
 
   health_check {
-    path                = "/healthcheck"
+    path                = var.health_check_path
     healthy_threshold   = 3
     unhealthy_threshold = 2
     timeout             = 5
@@ -84,7 +84,7 @@ resource "aws_alb_target_group" "alb_green_tg" {
   port        = 80
 
   health_check {
-    path                = "/healthcheck"
+    path                = var.health_check_path
     healthy_threshold   = 3
     unhealthy_threshold = 2
     timeout             = 5

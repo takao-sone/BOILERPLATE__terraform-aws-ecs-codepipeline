@@ -56,12 +56,6 @@ resource "aws_ecs_service" "app" {
     container_port   = 80
     target_group_arn = var.app_service_blue_target_group_arn
   }
-  # TODO: test listener port
-  #  load_balancer {
-  #    container_name = "cnappdemo"
-  #    container_port = 10081
-  #    target_group_arn = var.app_service_green_target_group_arn
-  #  }
 
   service_registries {
     registry_arn = aws_service_discovery_service.service_discovery.arn
@@ -113,6 +107,7 @@ resource "aws_ecs_task_definition" "app" {
   }
 }
 
+# FIXME: taskdef.jsonと同一設定??
 locals {
   container_definitions = [
     {
@@ -153,7 +148,7 @@ resource "aws_appautoscaling_target" "autoscaling_target" {
 }
 
 resource "aws_appautoscaling_policy" "autoscaling_policy" {
-  name               = "${var.project_name}-cnapp-ecs-scalingpolicy"
+  name               = "${var.project_name}-ecs-scalingpolicy"
   resource_id        = aws_appautoscaling_target.autoscaling_target.resource_id
   scalable_dimension = aws_appautoscaling_target.autoscaling_target.scalable_dimension
   service_namespace  = aws_appautoscaling_target.autoscaling_target.service_namespace

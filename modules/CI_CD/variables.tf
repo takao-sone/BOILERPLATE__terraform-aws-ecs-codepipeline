@@ -32,6 +32,14 @@ variable "alb_green_target_group_name" {
   type = string
 }
 
+variable "github_account_name" {
+  type = string
+}
+
+variable "github_repository_name" {
+  type = string
+}
+
 # SSM Parameter
 variable "docker_hub_username" {
   type = string

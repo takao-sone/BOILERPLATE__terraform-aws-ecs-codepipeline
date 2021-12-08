@@ -1,0 +1,27 @@
+{
+   "executionRoleArn":"arn:aws:iam::648099517491:role/boilerplate-ecsTaskExecutionRole",
+   "taskRoleArn":"arn:aws:iam::648099517491:role/boilerplate-ecsTaskRole",
+   "containerDefinitions":[
+      {
+         "name":"boilerplate-container",
+         "image":"<IMAGE1_NAME>",
+         "portMappings":[
+            {
+               "containerPort":80,
+               "hostPort":80,
+               "protocol":"tcp"
+            }
+         ],
+         "essential":true,
+         "cpu":512,
+         "memoryReservation":256
+      }
+   ],
+   "requiresCompatibilities":[
+      "FARGATE"
+   ],
+   "networkMode":"awsvpc",
+   "cpu":"512",
+   "memory":"1024",
+   "family":"boilerplate-app-task-definition"
+}

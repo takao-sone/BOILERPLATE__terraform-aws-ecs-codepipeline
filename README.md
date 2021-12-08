@@ -66,3 +66,7 @@ terraform apply
 8. 4 IAM Roles for codebuild, codepipeline, cloudwatch_event, codedeploy
 9. S3 bucket for codepipeline artifact
 10. 2 SSM Parameters for docker_hub_username, password
+
+###
+1. buildspec.yml for CodeBuild
+2. appspec.yaml & taskdef.json for CodeDeploy

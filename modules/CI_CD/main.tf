@@ -1,18 +1,10 @@
-# CodeCommit ===============================
-resource "aws_codecommit_repository" "repo" {
-  repository_name = "${var.project_name}-codecommit-repository"
-}
-
 # CodeBuild ===============================
 resource "aws_codebuild_project" "codebuild" {
-  name          = "${var.project_name}-codebuild"
-  badge_enabled = true
-  service_role  = aws_iam_role.codebuild_role.arn
+  name         = "${var.project_name}-codebuild"
+  service_role = aws_iam_role.codebuild_role.arn
 
   artifacts {
-    encryption_disabled    = false
-    override_artifact_name = false
-    type                   = "NO_ARTIFACTS"
+    type = "CODEPIPELINE"
   }
 
   environment {
@@ -35,10 +27,16 @@ resource "aws_codebuild_project" "codebuild" {
   }
 
   source {
-    git_clone_depth = 1
-    insecure_ssl    = false
-    location        = aws_codecommit_repository.repo.clone_url_http
-    type            = "CODECOMMIT"
+    type = "CODEPIPELINE"
+  }
+}
+
+# CodeStarConnection ===============================
+resource "aws_codestarconnections_connection" "github" {
+  name          = "${var.project_name}-codestar-connection"
+  provider_type = "GitHub"
+  tags = {
+    Name = "${var.project_name}-codestar-connection"
   }
 }
 
@@ -54,7 +52,7 @@ resource "aws_codedeploy_deployment_group" "app" {
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
   service_role_arn       = aws_iam_role.codedeploy_role.arn
   tags = {
-    Name = "${var.project_name}-cnapp-codedeploy-deployment-group"
+    Name = "${var.project_name}-codedeploy-deployment-group"
   }
 
   auto_rollback_configuration {
@@ -122,12 +120,17 @@ resource "aws_codepipeline" "codepipeline" {
     name = "Source"
 
     action {
-      category = "Source"
+      region    = var.aws_region
+      category  = "Source"
+      owner     = "AWS"
+      provider  = "CodeStarSourceConnection"
+      run_order = 1
+      version   = "1"
       configuration = {
-        "BranchName"           = "master"
-        "OutputArtifactFormat" = "CODE_ZIP"
-        "PollForSourceChanges" = "false"
-        "RepositoryName"       = aws_codecommit_repository.repo.repository_name
+        ConnectionArn        = aws_codestarconnections_connection.github.arn
+        FullRepositoryId     = "${var.github_account_name}/${var.github_repository_name}"
+        BranchName           = "main"
+        OutputArtifactFormat = "CODE_ZIP"
       }
       input_artifacts = []
       name            = "Source"
@@ -135,11 +138,6 @@ resource "aws_codepipeline" "codepipeline" {
       output_artifacts = [
         "SourceArtifact",
       ]
-      owner     = "AWS"
-      provider  = "CodeCommit"
-      region    = var.aws_region
-      run_order = 1
-      version   = "1"
     }
   }
   stage {
@@ -148,7 +146,7 @@ resource "aws_codepipeline" "codepipeline" {
     action {
       category = "Build"
       configuration = {
-        "ProjectName" = aws_codebuild_project.codebuild.name
+        ProjectName = aws_codebuild_project.codebuild.name
       }
       input_artifacts = [
         "SourceArtifact",
@@ -171,12 +169,12 @@ resource "aws_codepipeline" "codepipeline" {
     action {
       category = "Deploy"
       configuration = {
-        "AppSpecTemplateArtifact"        = "SourceArtifact"
-        "ApplicationName"                = aws_codedeploy_app.app.name
-        "DeploymentGroupName"            = aws_codedeploy_deployment_group.app.deployment_group_name
-        "Image1ArtifactName"             = "BuildArtifact"
-        "Image1ContainerName"            = "IMAGE1_NAME"
-        "TaskDefinitionTemplateArtifact" = "SourceArtifact"
+        AppSpecTemplateArtifact        = "SourceArtifact"
+        ApplicationName                = aws_codedeploy_app.app.name
+        DeploymentGroupName            = aws_codedeploy_deployment_group.app.deployment_group_name
+        Image1ArtifactName             = "BuildArtifact"
+        Image1ContainerName            = "IMAGE1_NAME"
+        TaskDefinitionTemplateArtifact = "SourceArtifact"
       }
       input_artifacts = [
         "BuildArtifact",
@@ -192,45 +190,6 @@ resource "aws_codepipeline" "codepipeline" {
       version          = "1"
     }
   }
-}
-
-# CloudWatch Event ===============================
-resource "aws_cloudwatch_event_rule" "codecommit_event" {
-  name           = "${var.project_name}-cloudwatch-event-rule"
-  description    = "Amazon CloudWatch Events rule to automatically start your pipeline when a change occurs in the AWS CodeCommit source repository and branch. Deleting this may prevent changes from being detected in that pipeline. Read more: http://docs.aws.amazon.com/codepipeline/latest/userguide/pipelines-about-starting.html"
-  event_bus_name = "default"
-  is_enabled     = true
-  event_pattern = jsonencode(
-    {
-      detail = {
-        event = [
-          "referenceCreated",
-          "referenceUpdated",
-        ]
-        referenceName = [
-          "master",
-        ]
-        referenceType = [
-          "branch",
-        ]
-      }
-      detail-type = [
-        "CodeCommit Repository State Change",
-      ]
-      resources = [
-        aws_codecommit_repository.repo.arn,
-      ]
-      source = [
-        "aws.codecommit",
-      ]
-    }
-  )
-}
-
-resource "aws_cloudwatch_event_target" "codecommit_event" {
-  arn      = aws_codepipeline.codepipeline.arn
-  role_arn = aws_iam_role.cloudwatch_event.arn
-  rule     = aws_cloudwatch_event_rule.codecommit_event.name
 }
 
 # IAM Role ===============================
@@ -249,7 +208,11 @@ resource "aws_iam_role" "codebuild_role" {
           Action = "sts:AssumeRole"
           Effect = "Allow"
           Principal = {
-            Service = "codebuild.amazonaws.com"
+            Service = [
+              "codebuild.amazonaws.com",
+              "codepipeline.amazonaws.com",
+              "codedeploy.amazonaws.com",
+            ]
           }
         },
       ]
@@ -488,6 +451,13 @@ resource "aws_iam_policy" "codepipeline" {
           Effect   = "Allow"
           Resource = "*"
         },
+        {
+          Effect : "Allow",
+          Action : [
+            "codestar-connections:UseConnection"
+          ],
+          Resource : aws_codestarconnections_connection.github.arn
+        },
       ]
       Version = "2012-10-17"
     }
@@ -523,7 +493,8 @@ resource "aws_iam_policy" "codebuild" {
           ]
           Effect = "Allow"
           Resource = [
-            "arn:aws:s3:::${var.project_name}-vvvvv-codepipeline-as",
+            aws_s3_bucket.codepipeline_artifact_store.arn,
+            "${aws_s3_bucket.codepipeline_artifact_store.arn}/*",
           ]
         },
         {

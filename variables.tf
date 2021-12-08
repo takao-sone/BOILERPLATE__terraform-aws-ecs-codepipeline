@@ -46,3 +46,12 @@ variable "docker_hub_username" {
 variable "docker_hub_password" {
   type = string
 }
+
+# Deploy
+variable "github_account_name" {
+  type = string
+}
+
+variable "github_repository_name" {
+  type = string
+}

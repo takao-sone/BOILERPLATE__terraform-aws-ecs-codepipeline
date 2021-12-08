@@ -54,6 +54,7 @@ module "alb" {
   project_name      = var.project_name
   vpc_id            = module.networking.vpc_id
   public_subnet_ids = module.networking.public_subnet_ids
+  health_check_path = "/api/v1/"
 }
 
 module "ecs" {
@@ -81,4 +82,6 @@ module "ci_cd" {
   app_ecs_service_name        = module.ecs.app_ecs_service_name
   docker_hub_username         = var.docker_hub_username
   docker_hub_password         = var.docker_hub_password
+  github_account_name         = var.github_account_name
+  github_repository_name      = var.github_repository_name
 }
