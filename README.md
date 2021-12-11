@@ -18,6 +18,11 @@ terraform plan
 terraform apply
 ```
 
+app_code
+```shell
+cp -r app_code/ ..
+```
+
 ## Main Resources
 
 ### Other
@@ -67,6 +72,6 @@ terraform apply
 9. S3 bucket for codepipeline artifact
 10. 2 SSM Parameters for docker_hub_username, password
 
-###
+### Application Repository Resources
 1. buildspec.yml for CodeBuild
 2. appspec.yaml & taskdef.json for CodeDeploy
