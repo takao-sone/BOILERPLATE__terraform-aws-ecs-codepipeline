@@ -243,29 +243,6 @@ resource "aws_iam_role" "codepipeline" {
   )
 }
 
-resource "aws_iam_role" "cloudwatch_event" {
-  name = "${var.project_name}-cloudwatch-event-role"
-  path = "/service-role/"
-  managed_policy_arns = [
-    aws_iam_policy.cloudwatch_event.arn,
-  ]
-
-  assume_role_policy = jsonencode(
-    {
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Action = "sts:AssumeRole"
-          Effect = "Allow"
-          Principal = {
-            Service = "events.amazonaws.com"
-          }
-        },
-      ]
-    }
-  )
-}
-
 resource "aws_iam_role" "codedeploy_role" {
   name               = "${var.project_name}-ecs-code-deploy-role"
   assume_role_policy = data.aws_iam_policy_document.codedeploy_role_assume_role_policy_document.json
@@ -545,32 +522,6 @@ resource "aws_iam_policy" "codebuild" {
       Version = "2012-10-17"
     }
   )
-}
-
-resource "aws_iam_policy" "cloudwatch_event" {
-  name        = "${var.project_name}-start-pipeline-execution-policy"
-  description = "Allows Amazon CloudWatch Events to automatically start a new execution in the ${var.project_name}-pipeline pipeline when a change occurs"
-  path        = "/service-role/"
-  policy = jsonencode(
-    {
-      Version = "2012-10-17"
-      Statement = [
-        {
-          Effect = "Allow"
-          Action = [
-            "codepipeline:StartPipelineExecution",
-          ]
-          Resource = [
-            aws_codepipeline.codepipeline.arn,
-          ]
-        },
-      ]
-    }
-  )
-
-  tags = {
-    Name = "${var.project_name}-start-pipeline-execution-policy"
-  }
 }
 
 # IAM Policy Document =============================================
