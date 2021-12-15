@@ -1,5 +1,9 @@
 # BOILERPLATE for AWS Basic ECS Architecture with Terraform
 
+## Architecture
+
+![Infrastructure Architecture](./draw.io/architecture.drawio.png)
+
 ## SETUP
 
 git-secrets
