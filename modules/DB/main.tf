@@ -37,8 +37,8 @@ resource "aws_rds_cluster" "rds_cluster" {
 
 # RDS Cluster Instance ==============================================
 resource "aws_rds_cluster_instance" "rds_cluster_instance" {
-  cluster_identifier           = aws_rds_cluster.rds_cluster.id
-  identifier                   = "${var.project_name}-rds-cluster-instance"
+  cluster_identifier = aws_rds_cluster.rds_cluster.id
+  identifier         = "${var.project_name}-rds-cluster-instance"
   # FIXME
   availability_zone            = "ap-northeast-1a"
   auto_minor_version_upgrade   = true

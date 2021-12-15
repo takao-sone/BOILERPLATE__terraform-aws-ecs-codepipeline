@@ -1,4 +1,4 @@
-# BOILERPLATE for AWS Basic ECS Architecture with Terraform
+# My AWS Basic ECS Architecture with Terraform
 
 ## Architecture
 
