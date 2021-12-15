@@ -2,11 +2,11 @@ use crate::api::path::ApiPath;
 use actix_web::{web, HttpResponse};
 
 async fn index() -> HttpResponse {
-    HttpResponse::Ok().json("Hello!!!!!")
+    HttpResponse::Ok().json("Hello Get!")
 }
 
 async fn index_post() -> HttpResponse {
-    HttpResponse::Ok().json("POST!!!!!")
+    HttpResponse::Ok().json("Hello Post!")
 }
 
 pub fn app_factory(app: &mut web::ServiceConfig) {

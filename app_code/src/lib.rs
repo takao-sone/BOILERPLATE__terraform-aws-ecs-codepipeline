@@ -9,3 +9,6 @@ pub mod api;
 pub mod app_middleware;
 pub mod db;
 mod error;
+pub mod schema;
+pub mod serialization;
+pub mod models;

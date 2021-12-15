@@ -1,5 +1,5 @@
 # Base ===========================
-project_name = "boilerplate" // 全小文字
+project_name = "boilerplate" // Lower case
 aws_profile  = "default"
 aws_region   = "ap-northeast-1"
 
@@ -10,6 +10,23 @@ private_subnet_container_cidrs = ["10.0.8.0/24", "10.0.9.0/24"]
 private_subnet_db_cidrs        = ["10.0.16.0/24", "10.0.17.0/24"]
 private_subnet_endpoint_cidrs  = ["10.0.248.0/24", "10.0.249.0/24"]
 
+# DB ===========================
+rds_master_username = "username"
+rds_master_password = "password"
+
 # Docker Hub ===========================
 #docker_hub_username = ""
 #docker_hub_password = ""
+
+# Github ===========================
+github_account_name    = "takao-sone"
+github_repository_name = "BOILERPLATE__aws-ecs"
+
+# Environmental Variables ===========================
+ssm_param_app_bound_address       = "0.0.0.0:80"
+ssm_param_app_frontend_origin     = "http://localhost:3000"
+ssm_param_app_valid_origin_value  = "http://localhost:8080"
+ssm_param_app_valid_referer_value = "http://localhost:8080/"
+ssm_param_app_database_url        = "postgres://username:password@localhost:5432/boilerplate"
+ssm_param_app_redis_address_port  = "0.0.0.0:6379"
+ssm_param_app_redis_private_key   = ""

@@ -1,0 +1,13 @@
+# FIXME
+# Replace following strings with project values.
+# ${project_name}
+
+version: 1
+Resources:
+    - TargetService:
+        Type: AWS::ECS::Service
+        Properties:
+          TaskDefinition: <TASK_DEFINITION>
+          LoadBalancerInfo:
+            ContainerName: "${project_name}-container"
+            ContainerPort: 80

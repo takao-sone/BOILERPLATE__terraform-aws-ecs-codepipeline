@@ -33,7 +33,7 @@ resource "aws_codebuild_project" "codebuild" {
 
 # CodeStarConnection ===============================
 resource "aws_codestarconnections_connection" "github" {
-  name          = "${var.project_name}-codestar-connection"
+  name          = "${var.project_name}-connection"
   provider_type = "GitHub"
   tags = {
     Name = "${var.project_name}-codestar-connection"
@@ -456,8 +456,8 @@ resource "aws_iam_policy" "codebuild" {
           ]
           Effect = "Allow"
           Resource = [
-            "arn:aws:logs:ap-northeast-1:648099517491:log-group:/aws/codebuild/${var.project_name}-codebuild",
-            "arn:aws:logs:ap-northeast-1:648099517491:log-group:/aws/codebuild/${var.project_name}-codebuild:*",
+            "arn:aws:logs:${var.aws_region}:${var.account_id}:log-group:/aws/codebuild/${var.project_name}-codebuild",
+            "arn:aws:logs:${var.aws_region}:${var.account_id}:log-group:/aws/codebuild/${var.project_name}-codebuild:*",
           ]
         },
         {
@@ -480,7 +480,7 @@ resource "aws_iam_policy" "codebuild" {
           ]
           Effect = "Allow"
           Resource = [
-            "arn:aws:codecommit:ap-northeast-1:648099517491:${var.project_name}-codecommit-repository",
+            "arn:aws:codecommit:${var.aws_region}:${var.account_id}:${var.project_name}-codecommit-repository",
           ]
         },
         {
@@ -493,7 +493,7 @@ resource "aws_iam_policy" "codebuild" {
           ]
           Effect = "Allow"
           Resource = [
-            "arn:aws:codebuild:ap-northeast-1:648099517491:report-group/${var.project_name}-codebuild-*",
+            "arn:aws:codebuild:${var.aws_region}:${var.account_id}:report-group/${var.project_name}-codebuild-*",
           ]
         },
         {
@@ -514,8 +514,7 @@ resource "aws_iam_policy" "codebuild" {
             "ssm:GetParameters",
           ]
           Resource = [
-            aws_ssm_parameter.docker_hub_username.arn,
-            aws_ssm_parameter.docker_hub_password.arn,
+            "*",
           ]
         }
       ]
@@ -552,14 +551,14 @@ resource "aws_s3_bucket" "codepipeline_artifact_store" {
 }
 
 # SSM Parameter ===============================
-resource "aws_ssm_parameter" "docker_hub_username" {
-  name  = "${var.project_name}-docker-hub-username"
-  type  = "SecureString"
-  value = var.docker_hub_username
-}
-
-resource "aws_ssm_parameter" "docker_hub_password" {
-  name  = "${var.project_name}-docker-hub-password"
-  type  = "SecureString"
-  value = var.docker_hub_password
-}
+#resource "aws_ssm_parameter" "docker_hub_username" {
+#  name  = "${var.project_name}-docker-hub-username"
+#  type  = "SecureString"
+#  value = var.docker_hub_username
+#}
+#
+#resource "aws_ssm_parameter" "docker_hub_password" {
+#  name  = "${var.project_name}-docker-hub-password"
+#  type  = "SecureString"
+#  value = var.docker_hub_password
+#}

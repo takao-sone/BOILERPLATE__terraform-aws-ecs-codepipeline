@@ -24,6 +24,10 @@ variable "private_subnet_db_cidrs" {
   type = list(string)
 }
 
+variable "private_subnet_redis_cidrs" {
+  type = list(string)
+}
+
 variable "private_subnet_endpoint_cidrs" {
   type = list(string)
 }

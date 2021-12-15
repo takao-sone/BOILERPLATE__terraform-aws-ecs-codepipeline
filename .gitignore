@@ -2,6 +2,9 @@
 .idea
 **/.DS_Store
 
+# Specific to this project =============================================
+#app_code
+
 # terraform =============================================
 # Local .terraform directories
 **/.terraform/*

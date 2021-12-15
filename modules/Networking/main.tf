@@ -70,6 +70,19 @@ resource "aws_vpc_endpoint" "ecs_awslogs" {
   }
 }
 
+resource "aws_vpc_endpoint" "ssm" {
+  vpc_id              = aws_vpc.vpc.id
+  service_name        = "com.amazonaws.${var.aws_region}.ssm"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = aws_subnet.private_endpoint_egress_subnets[*].id
+  security_group_ids  = [aws_security_group.vpc_endpoint.id]
+  private_dns_enabled = true
+
+  tags = {
+    Name = "${var.project_name}-ssm-vpce"
+  }
+}
+
 # Subnet ===============================
 resource "aws_subnet" "public_subnets" {
   count             = 2
@@ -101,6 +114,17 @@ resource "aws_subnet" "private_db_subnets" {
 
   tags = {
     Name = "${var.project_name}-private-db-subnet-${count.index + 1}"
+  }
+}
+
+resource "aws_subnet" "private_redis_subnets" {
+  count             = 2
+  vpc_id            = aws_vpc.vpc.id
+  availability_zone = data.aws_availability_zones.available.names[count.index]
+  cidr_block        = var.private_subnet_redis_cidrs[count.index]
+
+  tags = {
+    Name = "${var.project_name}-private-redis-subnet-${count.index + 1}"
   }
 }
 

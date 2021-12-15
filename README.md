@@ -1,4 +1,4 @@
-# BOILERPLATE for AWS Basic ECS with Terraform
+# BOILERPLATE for AWS Basic ECS Architecture with Terraform
 
 ## SETUP
 
@@ -9,6 +9,15 @@ git secrets --install
 git secrets --register-aws
 ```
 
+app_code
+```shell
+mv app_code/ ..
+
+# Edit buildspec.yml, appspec.yml, taskdef.json to fit your project.
+# See example.*.yml and example.taskdef.json.
+# ${aws_region}, ${project_name} and ${account_id} will be replaced.
+```
+
 Terraform
 ```shell
 touch terraform.tfvars
@@ -16,11 +25,6 @@ terraform init
 terraform get
 terraform plan
 terraform apply
-```
-
-app_code
-```shell
-cp -r app_code/ ..
 ```
 
 ## Main Resources
@@ -35,8 +39,8 @@ cp -r app_code/ ..
    (ecr_api, ecr_dkr, s3, ecs_awslogs)
 4. 4 Subnets  
    (public, private_container, private_db, private_endpoint)
-5. 2 Route Tables (1ついらないかも)  
-   (for public subnets, for private containers????)
+5. 2 Route Tables
+   (for public subnets, for private containers)
 6. Security Group
    (for vpc_endpoints)
 

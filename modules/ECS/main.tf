@@ -12,8 +12,30 @@ resource "aws_ecr_repository" "app_ecr_repo" {
   }
 }
 
+resource "aws_ecr_repository" "migration_ecr_repo" {
+  name                 = "${var.project_name}-migration-ecr-repo"
+  image_tag_mutability = "MUTABLE"
+
+  tags = {
+    Name = "${var.project_name}-migration-ecr-repo"
+  }
+
+  encryption_configuration {
+    encryption_type = "AES256"
+  }
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
 resource "aws_ecr_lifecycle_policy" "ecr_lifecycle_policy" {
   repository = aws_ecr_repository.app_ecr_repo.name
+  policy     = file("${path.module}/data/ecr_lifecycle_policy.json")
+}
+
+resource "aws_ecr_lifecycle_policy" "ecr_migration_lifecycle_policy" {
+  repository = aws_ecr_repository.migration_ecr_repo.name
   policy     = file("${path.module}/data/ecr_lifecycle_policy.json")
 }
 
@@ -107,7 +129,21 @@ resource "aws_ecs_task_definition" "app" {
   }
 }
 
-# FIXME: taskdef.jsonと同一設定??
+resource "aws_ecs_task_definition" "migration" {
+  family                   = "${var.project_name}-migration-task-def"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  cpu                      = "256"
+  memory                   = "512"
+  task_role_arn            = aws_iam_role.ecs_app_task_role.arn
+  execution_role_arn       = aws_iam_role.ecs_app_task_execution_role.arn
+  container_definitions    = jsonencode(local.migration_container_definitions)
+  tags = {
+    Name = "${var.project_name}-migration-task-definition"
+  }
+}
+
+# taskdef.jsonと同一
 locals {
   container_definitions = [
     {
@@ -122,16 +158,72 @@ locals {
           hostPort      = 80
         }
       ]
+      secrets = [
+        {
+          name      = "BOUND_ADDRESS"
+          valueFrom = aws_ssm_parameter.app_bound_address.arn
+        },
+        {
+          name      = "FRONTEND_ORIGIN"
+          valueFrom = aws_ssm_parameter.app_frontend_origin.arn
+        },
+        {
+          name      = "VALID_ORIGIN_VALUE"
+          valueFrom = aws_ssm_parameter.app_valid_origin_value.arn
+        },
+        {
+          name      = "VALID_REFERER_VALUE"
+          valueFrom = aws_ssm_parameter.app_valid_referer_value.arn
+        },
+        {
+          name      = "DATABASE_URL"
+          valueFrom = aws_ssm_parameter.app_database_url.arn
+        },
+        {
+          name      = "REDIS_ADDRESS_PORT"
+          valueFrom = aws_ssm_parameter.app_redis_address_port.arn
+        },
+        {
+          name      = "REDIS_PRIVATE_KEY"
+          valueFrom = aws_ssm_parameter.app_redis_private_key.arn
+        }
+      ]
       logConfiguration = {
         logDriver     = "awslogs"
         secretOptions = null
         options = {
-          awslogs-group         = var.ecs_log_group_name
+          awslogs-group         = aws_cloudwatch_log_group.ecs_log_group.name
           awslogs-region        = var.aws_region
           awslogs-stream-prefix = "${var.project_name}-ecs"
         }
       }
     }
+  ]
+  migration_container_definitions = [
+    {
+      name              = "${var.project_name}-migration-container"
+      image             = aws_ecr_repository.migration_ecr_repo.repository_url
+      memoryReservation = 128
+      cpu               = 0
+      essential         = true
+      startTimeout      = 120
+      stopTimeout       = 120
+      portMappings      = []
+      secrets = [
+        {
+          name      = "DATABASE_URL"
+          valueFrom = aws_ssm_parameter.app_database_url.arn
+        },
+      ]
+      logConfiguration = {
+        logDriver = "awslogs"
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.ecs_migration_log_group.name
+          awslogs-region        = var.aws_region
+          awslogs-stream-prefix = "${var.project_name}-ecs-migration"
+        }
+      }
+    },
   ]
 }
 
@@ -188,7 +280,13 @@ resource "aws_security_group" "container" {
 
 # Cloud Watch ==============================================
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
-  name = var.ecs_log_group_name
+  name              = var.ecs_log_group_name
+  retention_in_days = 1
+}
+
+resource "aws_cloudwatch_log_group" "ecs_migration_log_group" {
+  name              = var.ecs_migration_task_log_group_name
+  retention_in_days = 1
 }
 
 # IAM Role =============================================
@@ -216,7 +314,38 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy_attach
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy_attachment_for_ssm_params" {
+  role       = aws_iam_role.ecs_app_task_execution_role.name
+  policy_arn = aws_iam_policy.get_ssm_params.arn
+}
+
 # IAM Policy =============================================
+resource "aws_iam_policy" "get_ssm_params" {
+  name   = "${var.project_name}-get-ssm-params-policy"
+  policy = data.aws_iam_policy_document.ecs_task_execution_role_get_ssm_params_policy_document.json
+}
+
+# IAM Policy =============================================
+data "aws_iam_policy_document" "ecs_task_execution_role_get_ssm_params_policy_document" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "ssm:GetParameters",
+      #      "secretsmanager:GetSecretValue",
+      #      "kms:Decrypt"
+    ]
+    resources = [
+      aws_ssm_parameter.app_bound_address.arn,
+      aws_ssm_parameter.app_frontend_origin.arn,
+      aws_ssm_parameter.app_valid_origin_value.arn,
+      aws_ssm_parameter.app_valid_referer_value.arn,
+      aws_ssm_parameter.app_database_url.arn,
+      aws_ssm_parameter.app_redis_address_port.arn,
+      aws_ssm_parameter.app_redis_private_key.arn,
+    ]
+  }
+}
+
 data "aws_iam_policy_document" "ecs_task_execution_role_assume_role_policy_document" {
   statement {
     actions = ["sts:AssumeRole"]
@@ -235,4 +364,47 @@ data "aws_iam_policy_document" "ecs_task_role_assume_role_policy" {
       identifiers = ["ecs-tasks.amazonaws.com"]
     }
   }
+}
+
+# SSM Parameter ===============================
+resource "aws_ssm_parameter" "app_bound_address" {
+  name  = "BOUND_ADDRESS"
+  type  = "String"
+  value = var.ssm_param_app_bound_address
+}
+
+resource "aws_ssm_parameter" "app_frontend_origin" {
+  name  = "FRONTEND_ORIGIN"
+  type  = "String"
+  value = var.ssm_param_app_frontend_origin
+}
+
+resource "aws_ssm_parameter" "app_valid_origin_value" {
+  name  = "VALID_ORIGIN_VALUE"
+  type  = "String"
+  value = var.ssm_param_app_valid_origin_value
+}
+
+resource "aws_ssm_parameter" "app_valid_referer_value" {
+  name  = "VALID_REFERER_VALUE"
+  type  = "String"
+  value = var.ssm_param_app_valid_referer_value
+}
+
+resource "aws_ssm_parameter" "app_database_url" {
+  name  = "DATABASE_URL"
+  type  = "SecureString"
+  value = var.ssm_param_app_database_url
+}
+
+resource "aws_ssm_parameter" "app_redis_address_port" {
+  name  = "REDIS_ADDRESS_PORT"
+  type  = "SecureString"
+  value = var.ssm_param_app_redis_address_port
+}
+
+resource "aws_ssm_parameter" "app_redis_private_key" {
+  name  = "REDIS_PRIVATE_KEY"
+  type  = "SecureString"
+  value = var.ssm_param_app_redis_private_key
 }

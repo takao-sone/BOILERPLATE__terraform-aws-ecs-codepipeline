@@ -23,7 +23,7 @@ git secrets --register-aws
 ```
 
 ### Notice
-If you encountered errors like `error: linking with cc failed: exit code: 1`, then **run the next command**
+If you encounter errors like `error: linking with cc failed: exit code: 1`, then **run the next command**
 
 ```shell
 sudo xcode-select --reset
@@ -45,19 +45,10 @@ cargo watch -x 'run --bin boilerplate_actix-web_postgres'
 cargo run -- test
 ```
 
-Run docker
+Docker compose
 
 ```shell
 # dev environment
 docker compose -f docker-compose.dev.yml -p dev up
 docker compose -f docker-compose.dev.yml -p dev down
-
-# test environment
-```
-
-Others
-
-```shell
-# format
-cargo fmt
 ```

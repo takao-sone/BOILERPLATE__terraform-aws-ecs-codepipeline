@@ -1,13 +1,18 @@
+# FIXME
+# Replace following strings with project values.
+# ${aws_region}
+# ${project_name}
+
 version: 0.2
 
 env:
   variables:
-    AWS_REGION_NAME: ap-northeast-1
-    ECR_REPOSITORY_NAME: boilerplate-app-ecr-repo
+    AWS_REGION_NAME: ${aws_region}
+    ECR_REPOSITORY_NAME: ${project_name}-app-ecr-repo
     DOCKER_BUILDKIT: "1"
   parameter-store:
-    # DOCKERHUB_USER: boilerplate-docker-hub-username
-    # DOCKERHUB_PASS: boilerplate-docker-hub-password
+    # DOCKERHUB_USER: ${project_name}-docker-hub-username
+    # DOCKERHUB_PASS: ${project_name}-docker-hub-password
     BOUND_ADDRESS: BOUND_ADDRESS
     FRONTEND_ORIGIN: FRONTEND_ORIGIN
     VALID_ORIGIN_VALUE: VALID_ORIGIN_VALUE

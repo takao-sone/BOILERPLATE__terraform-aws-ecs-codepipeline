@@ -7,6 +7,10 @@ variable "aws_region" {
   type = string
 }
 
+variable "account_id" {
+  type = string
+}
+
 # ========================
 variable "app_ecs_service_name" {
   type = string
@@ -41,10 +45,11 @@ variable "github_repository_name" {
 }
 
 # SSM Parameter
-variable "docker_hub_username" {
-  type = string
-}
 
-variable "docker_hub_password" {
-  type = string
-}
+#variable "docker_hub_username" {
+#  type = string
+#}
+#
+#variable "docker_hub_password" {
+#  type = string
+#}
