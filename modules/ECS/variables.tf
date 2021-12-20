@@ -76,6 +76,14 @@ variable "ssm_param_app_redis_private_key" {
   type = string
 }
 
+variable "ssm_param_app_rust_log" {
+  type = string
+}
+
+variable "ssm_param_app_rust_backtrace" {
+  type = string
+}
+
 
 # Task
 #variable "app_ecs_task_execution_role_arn" {

@@ -17,32 +17,40 @@
          "memoryReservation":256,
          "secrets": [
             {
-               "name": "BOUND_ADDRESS",
-               "valueFrom": "arn:aws:ssm:ap-northeast-1:648089517491:parameter/BOUND_ADDRESS"
+               "name": "APP_BOUND_ADDRESS",
+               "valueFrom": "arn:aws:ssm:ap-northeast-1:648099517491:parameter/APP_BOUND_ADDRESS"
             },
             {
                "name": "FRONTEND_ORIGIN",
-               "valueFrom": "arn:aws:ssm:ap-northeast-1:648089517491:parameter/FRONTEND_ORIGIN"
+               "valueFrom": "arn:aws:ssm:ap-northeast-1:648099517491:parameter/FRONTEND_ORIGIN"
             },
             {
                "name": "VALID_ORIGIN_VALUE",
-               "valueFrom": "arn:aws:ssm:ap-northeast-1:648089517491:parameter/VALID_ORIGIN_VALUE"
+               "valueFrom": "arn:aws:ssm:ap-northeast-1:648099517491:parameter/VALID_ORIGIN_VALUE"
             },
             {
                "name": "VALID_REFERER_VALUE",
-               "valueFrom": "arn:aws:ssm:ap-northeast-1:648089517491:parameter/VALID_REFERER_VALUE"
+               "valueFrom": "arn:aws:ssm:ap-northeast-1:648099517491:parameter/VALID_REFERER_VALUE"
             },
             {
-               "name": "DATABASE_URL",
-               "valueFrom": "arn:aws:ssm:ap-northeast-1:648089517491:parameter/DATABASE_URL"
+               "name": "DB_URL",
+               "valueFrom": "arn:aws:ssm:ap-northeast-1:648099517491:parameter/DB_URL"
             },
             {
-               "name": "REDIS_ADDRESS_PORT",
-               "valueFrom": "arn:aws:ssm:ap-northeast-1:648089517491:parameter/REDIS_ADDRESS_PORT"
+               "name": "REDIS_ADDRESS",
+               "valueFrom": "arn:aws:ssm:ap-northeast-1:648099517491:parameter/REDIS_ADDRESS"
             },
             {
-               "name": "REDIS_PRIVATE_KEY",
-               "valueFrom": "arn:aws:ssm:ap-northeast-1:648089517491:parameter/REDIS_PRIVATE_KEY"
+               "name": "REDIS_COOKIE_SESSION_PRIVATE_KEY",
+               "valueFrom": "arn:aws:ssm:ap-northeast-1:648099517491:parameter/REDIS_COOKIE_SESSION_PRIVATE_KEY"
+            },
+            {
+               "name": "RUST_LOG",
+               "valueFrom": "arn:aws:ssm:ap-northeast-1:648099517491:parameter/RUST_LOG"
+            },
+            {
+               "name": "RUST_BACKTRACE",
+               "valueFrom": "arn:aws:ssm:ap-northeast-1:648099517491:parameter/RUST_BACKTRACE"
             }
          ],
          "logConfiguration": {

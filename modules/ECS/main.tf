@@ -342,6 +342,8 @@ data "aws_iam_policy_document" "ecs_task_execution_role_get_ssm_params_policy_do
       aws_ssm_parameter.app_database_url.arn,
       aws_ssm_parameter.app_redis_address_port.arn,
       aws_ssm_parameter.app_redis_private_key.arn,
+      aws_ssm_parameter.app_rust_log.arn,
+      aws_ssm_parameter.app_rust_backtrace.arn,
     ]
   }
 }
@@ -368,7 +370,7 @@ data "aws_iam_policy_document" "ecs_task_role_assume_role_policy" {
 
 # SSM Parameter ===============================
 resource "aws_ssm_parameter" "app_bound_address" {
-  name  = "BOUND_ADDRESS"
+  name  = "APP_BOUND_ADDRESS"
   type  = "String"
   value = var.ssm_param_app_bound_address
 }
@@ -392,19 +394,31 @@ resource "aws_ssm_parameter" "app_valid_referer_value" {
 }
 
 resource "aws_ssm_parameter" "app_database_url" {
-  name  = "DATABASE_URL"
+  name  = "DB_URL"
   type  = "SecureString"
   value = var.ssm_param_app_database_url
 }
 
 resource "aws_ssm_parameter" "app_redis_address_port" {
-  name  = "REDIS_ADDRESS_PORT"
+  name  = "REDIS_ADDRESS"
   type  = "SecureString"
   value = var.ssm_param_app_redis_address_port
 }
 
 resource "aws_ssm_parameter" "app_redis_private_key" {
-  name  = "REDIS_PRIVATE_KEY"
+  name  = "REDIS_COOKIE_SESSION_PRIVATE_KEY"
   type  = "SecureString"
   value = var.ssm_param_app_redis_private_key
+}
+
+resource "aws_ssm_parameter" "app_rust_log" {
+  name  = "RUST_LOG"
+  type  = "String"
+  value = var.ssm_param_app_rust_log
+}
+
+resource "aws_ssm_parameter" "app_rust_backtrace" {
+  name  = "RUST_BACKTRACE"
+  type  = "String"
+  value = var.ssm_param_app_rust_backtrace
 }

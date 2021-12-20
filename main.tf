@@ -80,6 +80,8 @@ module "ecs" {
   ssm_param_app_redis_private_key   = var.ssm_param_app_redis_private_key
   ssm_param_app_valid_origin_value  = var.ssm_param_app_valid_origin_value
   ssm_param_app_valid_referer_value = var.ssm_param_app_valid_referer_value
+  ssm_param_app_rust_log            = var.ssm_param_app_rust_log
+  ssm_param_app_rust_backtrace      = var.ssm_param_app_rust_backtrace
 }
 
 module "ci_cd" {

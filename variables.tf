@@ -97,3 +97,11 @@ variable "ssm_param_app_redis_address_port" {
 variable "ssm_param_app_redis_private_key" {
   type = string
 }
+
+variable "ssm_param_app_rust_log" {
+  type = string
+}
+
+variable "ssm_param_app_rust_backtrace" {
+  type = string
+}
