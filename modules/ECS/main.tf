@@ -394,7 +394,7 @@ resource "aws_ssm_parameter" "app_valid_referer_value" {
 }
 
 resource "aws_ssm_parameter" "app_database_url" {
-  name  = "DB_URL"
+  name  = "DATABASE_URL"
   type  = "SecureString"
   value = var.ssm_param_app_database_url
 }
