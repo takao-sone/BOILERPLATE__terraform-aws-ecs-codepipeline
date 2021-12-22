@@ -160,7 +160,7 @@ locals {
       ]
       secrets = [
         {
-          name      = "BOUND_ADDRESS"
+          name      = "APP_BOUND_ADDRESS"
           valueFrom = aws_ssm_parameter.app_bound_address.arn
         },
         {
@@ -180,12 +180,20 @@ locals {
           valueFrom = aws_ssm_parameter.app_database_url.arn
         },
         {
-          name      = "REDIS_ADDRESS_PORT"
+          name      = "REDIS_ADDRESS"
           valueFrom = aws_ssm_parameter.app_redis_address_port.arn
         },
         {
-          name      = "REDIS_PRIVATE_KEY"
+          name      = "REDIS_COOKIE_SESSION_PRIVATE_KEY"
           valueFrom = aws_ssm_parameter.app_redis_private_key.arn
+        },
+        {
+          name      = "RUST_LOG"
+          valueFrom = aws_ssm_parameter.app_rust_log.arn
+        },
+        {
+          name      = "RUST_BACKTRACE"
+          valueFrom = aws_ssm_parameter.app_rust_backtrace.arn
         }
       ]
       logConfiguration = {
